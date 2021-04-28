@@ -17,6 +17,8 @@ ln -s $(pwd) $recreated_repo_dir
 
 cd $recreated_repo_dir
 
+echo $GITHUB_WORKSPACE
+
 eval python3 /action/run_action.py \
   --clang-tidy-fixes $INPUT_CLANG_TIDY_FIXES \
   --pull-request-id $pull_request_id \

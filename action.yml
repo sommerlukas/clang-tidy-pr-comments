@@ -13,6 +13,10 @@ inputs:
   suggestions_per_comment:
     description: 'The number of suggestions per comment (smaller numbers work better for heavy pull requests)'
     default: 10
+  repository_root:
+    description: 'The root directory of the respository'
+    default: ""
+    required: false
 
 runs:
   using: 'docker'
