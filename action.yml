@@ -19,8 +19,18 @@ inputs:
     required: false
 
 runs:
-  using: 'docker'
-  image: 'Dockerfile'
-branding:
-  icon: 'cpu'  
-  color: 'green'
+  using: "composite"
+  steps:
+    - run: pip3 install -r  ${{ github.action_path }}/requirements.txt
+      shell: bash
+    - run: ${{ github.action_path }}/entrypoint.sh
+      shell: bash
+      env:
+        INPUT_CLANG_TIDY_FIXES: ${{ inputs.clang_tidy_fixes }}
+        INPUT_REQUEST_CHANGES: ${{ inputs.request_changes }}
+        INPUT_SUGGESTIONS_PER_COMMENT: ${{ inputs.suggestions_per_comment }}
+        INPUT_REPOSITORY_ROOT: ${{ inputs.repository_root }}
+        INPUT_GITHUB_TOKEN: ${{ inputs.github_token }}
+        PYTHON_SCRIPT_PATH: ${{ github.action_path }}
+    
+    
