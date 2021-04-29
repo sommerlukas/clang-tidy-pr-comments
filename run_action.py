@@ -74,28 +74,29 @@ def main():
 
     files_and_lines_available_for_comments = dict()
     for pull_request_file in pull_request_files:
-        git_line_tags = re.findall(r"@@.*?@@", pull_request_file["patch"])
-        # The result is something like ['@@ -101,8 +102,11 @@', '@@ -123,9 +127,7 @@']
-        # We need to get it to a state like this: ['102,11', '127,7']
-        lines_and_changes = [
-            line_tag.replace("@@", "").strip().split()[1].replace("+", "")
-            for line_tag in git_line_tags
-        ]
-        lines_available_for_comments = [
-            list(
-                range(
-                    int(change.split(",")[0]),
-                    int(change.split(",")[0]) + int(change.split(",")[1]),
+        if "patch" in pull_request_file:
+            git_line_tags = re.findall(r"@@.*?@@", pull_request_file["patch"])
+            # The result is something like ['@@ -101,8 +102,11 @@', '@@ -123,9 +127,7 @@']
+            # We need to get it to a state like this: ['102,11', '127,7']
+            lines_and_changes = [
+                line_tag.replace("@@", "").strip().split()[1].replace("+", "")
+                for line_tag in git_line_tags
+            ]
+            lines_available_for_comments = [
+                list(
+                    range(
+                        int(change.split(",")[0]),
+                        int(change.split(",")[0]) + int(change.split(",")[1]),
+                    )
                 )
+                for change in lines_and_changes
+            ]
+            lines_available_for_comments = list(
+                itertools.chain.from_iterable(lines_available_for_comments)
             )
-            for change in lines_and_changes
-        ]
-        lines_available_for_comments = list(
-            itertools.chain.from_iterable(lines_available_for_comments)
-        )
-        files_and_lines_available_for_comments[
-            pull_request_file["filename"]
-        ] = lines_available_for_comments
+            files_and_lines_available_for_comments[
+                pull_request_file["filename"]
+            ] = lines_available_for_comments
 
     clang_tidy_fixes = dict()
     with open(args.clang_tidy_fixes) as file:
